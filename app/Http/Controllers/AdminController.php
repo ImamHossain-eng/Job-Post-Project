@@ -55,11 +55,11 @@ class AdminController extends Controller
 
         $post = Post::find($id);
         $old_thumbnail = $post->thumbnail;
-        $user_id = $post->user_id;
+        $oldStatus = $post->status;
 
-        if(Auth::user()->id !== $user_id){
+        if(Auth::user()->id !== $post->user_id){
             return response([
-                'message' => 'Unauthorized request'
+                'message' => 'Unauthorized Request: You are not the author of this Post'
             ], 401);
         }else{
             //Check for thumbnail which is nullable
@@ -76,10 +76,17 @@ class AdminController extends Controller
                 $file_name = $old_thumbnail;
             }
 
+            //status validation
+            if($request->input('status') != ''){
+                $status = $request->input('status');
+            }else{
+                $status = $oldStatus;
+            }
+
             $post->title = $request->input('title');
             $post->description = $request->input('description');
             $post->thumbnail = $file_name;
-            $post->status = $request->input('status');
+            $post->status = $status;
 
             $post->save();
 
@@ -92,7 +99,7 @@ class AdminController extends Controller
         $post = Post::find($id);
         if(Auth::user()->id != $post->user_id){
             return response([
-                'message' => 'Unauthorized request'
+                'message' => 'Unauthorized Request: You are not the author of this post'
             ], 401);
         }else{
             $post->delete();
@@ -101,18 +108,12 @@ class AdminController extends Controller
     }
     //store new admin
     public function admin_store(Request $request){
-        $fields = $request->validate([
+        $this->validate($request, [
             'name' => 'required|string',
             'email' => 'required|string|unique:users,email',
             'password' => 'required|string|confirmed'
         ]);
 
-        // $user = User::create([
-        //     'name' => $fields['name'],
-        //     'email' => $fields['email'],
-        //     'role' => 'admin',
-        //     'password' => bcrypt($fields['password'])
-        // ]);
         $user = new User;
         $user->name = $request->input('name');
         $user->email = $request->input('email');

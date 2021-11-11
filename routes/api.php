@@ -29,7 +29,6 @@ Route::group(['middleware'=>'auth:sanctum'], function(){
 
 //Protected Route for authenticated user
 Route::group(['prefix'=>'user', 'middleware'=>['auth:sanctum', 'user']], function(){
-    Route::get('/test', [UserController::class, 'test']);
     Route::get('/posts', [UserController::class, 'post_index']);
     Route::get('/post/{id}', [UserController::class, 'post_show']);
 });
@@ -37,14 +36,13 @@ Route::group(['prefix'=>'user', 'middleware'=>['auth:sanctum', 'user']], functio
 
 //Protected Route for Admin
 Route::group(['prefix'=>'admin', 'middleware'=>['auth:sanctum', 'admin']], function(){
-    Route::get('/test', [AdminController::class, 'test']);
     Route::get('/posts', [AdminController::class, 'post_index']);
     Route::get('/post/{id}', [AdminController::class, 'post_show']);
     Route::post('/post', [AdminController::class, 'post_store']);
     Route::put('/post/{id}', [AdminController::class, 'post_update']);
     Route::delete('post/{id}', [AdminController::class, 'post_destroy']);
 
-    //Create admin user
+    //Create new admin 
     Route::post('/create', [AdminController::class, 'admin_store']);
     
 });
