@@ -17,20 +17,13 @@ class User
      */
     public function handle(Request $request, Closure $next)
     {
-        if(Auth::check()){
-            if(Auth::user()->role == 'user'){
-                return $next($request);
-            }else{
-                return response([
-                    'message' => 'You do not have user access.'
-                ], 401);
-            }
+        if(Auth::user()->role == 'user'){
+            return $next($request);
         }else{
             return response([
-                'message' => 'You are not logged in.'
+                'message' => 'You do not have user access.'
             ], 401);
         }
-
-        
+                
     }
 }
